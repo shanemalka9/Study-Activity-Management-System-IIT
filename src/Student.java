@@ -5,9 +5,10 @@ public class Student {
     private String stName;
     private Module[] modules;
 
-    public Student(String stID, String stName) {
-        this.stID = stID;
-        this.stName = stName;
+    public Student(String ID, String name) {
+        this.stID = ID;
+        this.stName = name;
+        modules = new Module[3];
     }
 
     public String getStID() {
