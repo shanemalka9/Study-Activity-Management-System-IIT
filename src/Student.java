@@ -3,6 +3,7 @@ public class Student {
     // Private attributes
     private String stID;
     private String stName;
+    private Module[] modules;
 
     public Student(String stID, String stName) {
         this.stID = stID;
