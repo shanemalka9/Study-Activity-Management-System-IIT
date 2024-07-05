@@ -10,8 +10,7 @@ public class Main {
         while (true) {
             int menuItem;
 
-            System.out.println("Maim Menu");
-            System.out.println("=========\n");
+            System.out.println("=========\nMaim Menu=========\n\n");
 
             System.out.println("1. Check Availability Of Seats");
             System.out.println("2. Student Registration");
@@ -20,7 +19,7 @@ public class Main {
             System.out.println("5. Export Details TO File");
             System.out.println("6. Import Details From File");
             System.out.println("7. View Student List");
-            System.out.println("8. Exit");
+            System.out.println("8. Exit\n");
 
             System.out.print("Enter your choice: ");
 
