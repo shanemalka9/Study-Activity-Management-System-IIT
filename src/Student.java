@@ -4,16 +4,12 @@ public class Student {
     private String stID;
     private String stName;
     private Module[] modules;
-
-    public Student(String ID) {
-        this.stID = ID;
-        modules = new Module[3];
-    }
+    private String moduleGrade;
 
     public Student(String ID, String name) {
         this.stID = ID;
         this.stName = name;
-        modules = new Module[3];
+        this.modules = new Module[3];
     }
 
     public String getStID() {
@@ -35,4 +31,5 @@ public class Student {
     public Module[] getModules() {
         return modules;
     }
+
 }

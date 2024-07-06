@@ -2,7 +2,6 @@ public class Module {
 
     // Private attributes
     private double moduleMarks;
-    private String moduleGrade;
 
     public Module(double moduleMarks) {
         this.moduleMarks = moduleMarks;

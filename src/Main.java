@@ -59,12 +59,12 @@ public class Main {
                         System.out.println("Exiting....");
                         return;
                     default:
-                        System.out.println("\nMenu Item Does Not Exist.\n<<Press Enter to continue>>");
+                        System.out.println("\nMenu Item Does Not Exist.\n>>Press Enter to continue<<");
                         userInput.nextLine();
                 }
 
             } else { // If user inputs an invalid value an error message is printed
-                System.out.println("\nMenu Item Does not exist! Please choose a valid item.\n<<Press Enter to continue>>");
+                System.out.println("\nMenu Item Does not exist! Please choose a valid item.\n>>Press Enter to continue<<");
                 userInput.nextLine();// Clear userInput
                 userInput.nextLine();// Pauses until user presses enter
             }
@@ -75,7 +75,7 @@ public class Main {
      * Subtracts total the student count form total number of students
      */
     private static void checkAvailableSeats() {
-        System.out.println("\nTotal Number of Available Seats are: " + (maxStudents - studentCount) + "\n<<Press Enter to continue>>");
+        System.out.println("\nTotal Number of Available Seats are: " + (maxStudents - studentCount) + "\n>>Press Enter to continue<<");
         userInput.nextLine();
     }
 
@@ -92,27 +92,12 @@ public class Main {
             userInput.nextLine();
         } while (idValidation(id, true));
 
-        // This section is used if the user wants to add the name while registering and is linked to the "Add Student Name" part is task 2
-        while (true) {
-            System.out.print("Would you like to add student name now? (y/n) ");
-            String choice = userInput.next().toLowerCase();
-            userInput.nextLine();
+        System.out.print("Enter your name: ");
+        String name = userInput.nextLine().toUpperCase();
+        students[studentCount] = new Student(id, name);// If id is valid then create a Student object and add it to the main array
 
-            if (choice.equals("y") || choice.equals("yes")) {
-
-                System.out.print("Enter your name: ");
-                String name = userInput.nextLine().toUpperCase();
-                students[studentCount] = new Student(id, name);// If id is valid then create a Student object and add it to the main array
-                break;
-            } else if (choice.equals("n") || choice.equals("no")) {
-                students[studentCount] = new Student(id);// If id is valid then create a Student object and add it to the main array
-                break;
-            } else {
-                System.out.println("\nInvalid response. Enter (y / yes) or (n / no)\n");
-            }
-        }
         studentCount++;// Increment counter by 1
-        System.out.println("*** New Student seat reserved ***\n<<Press Enter to continue>>");
+        System.out.println("*** New Student seat reserved ***\n>>Press Enter to continue<<");
         userInput.nextLine();
     }
 
@@ -122,25 +107,24 @@ public class Main {
     private static void delete() {
         String id;
 
-        //? How does the user know which ID to delete
-        //TODO: Implement a method to display ids to the user
-
         do {
             System.out.print("Enter Student ID of entry you want to delete: ");
             id = userInput.next();
         } while (idValidation(id, false));
 
 
-        for (int i = 0; i < students.length; i++) {// Loop through all elements in array
+        for (int i = 0; i < studentCount; i++) {// Loop through all elements in array
             if (students[i].getStID().equals(id)) {// Check until Student ID is equal to the user input
-                for (int j = i; j < students.length - 1; j++) {
+                for (int j = i; j < studentCount - 1; j++) {
                     students[j] = students[j + 1];// Shift all elements 1 step to the left
                 }
-                students[students.length - 1] = null; // Set the last element to null after shifting
+                students[studentCount - 1] = null; // Set the last element to null after shifting
                 break; // Exit the loop once the element is deleted
             }
         }
-        System.out.println("Student entry deleted successfully.");
+        System.out.println("Student entry deleted successfully.\n>>Press Enter to continue<<");
+        studentCount--;
+        userInput.nextLine();
     }
 
     /**
@@ -153,20 +137,30 @@ public class Main {
             System.out.print("\nEnter student ID to search: ");
             id = userInput.next();
             userInput.nextLine();
-
         } while (idValidation(id, false));
 
         for (Student student : students) {
             if (student == null) {
                 break;
-            } else if (student.getStID().equals(id)) {
-                System.out.println("<< Search results >>");
+            }
+            if (student.getStID().equals(id)) {
+
+                System.out.println(">> Search results <<");
                 System.out.println("Student ID: " + student.getStID());
-                System.out.println("Student Name: " + ((student.getStName()) == null ? System.out.println("") : student.getStName()));
-                System.out.println("Student marks: " + student.getModules()[0] + student.getModules()[1] + student.getModules()[2]);//TODO: Need to add functionality to view marks of students and if not provided send a message
+                System.out.println("Student Name: " + student.getStName());
+                System.out.println("Student marks: ");
+
+                for (int i = 0; i < student.getModules().length; i++) {
+                    System.out.print("Module " + (i + 1) + " : ");
+                    if (student.getModules()[i] == null) {
+                        System.out.println("Marks Unavailable");
+                    } else {
+                        System.out.println(student.getModules()[i].getModuleMarks());
+                    }
+                }
             }
         }
-        System.out.println("\n<<Press Enter to continue>>");
+        System.out.println("\n>>Press Enter to continue<<");
         userInput.nextLine();
     }
 
@@ -176,9 +170,38 @@ public class Main {
     private static void importDetails() {
     }
 
+    /**
+     * This function views all students names and ID's by sorting them in ascending order by name
+     */
     private static void view() {
+        Student[] studentCopy = students.clone();// Cloned array as to not change original array
+        // Bubble sort for view functions
+        for (int i = 0; i < studentCount - 1; i++) {
+            for (int j = 0; j < studentCount - 1 - i; j++) {
+                if (studentCopy[j].getStName().compareTo(studentCopy[j + 1].getStName()) > 0) {
+                    Student temp = studentCopy[j];
+                    studentCopy[j] = studentCopy[j + 1];
+                    studentCopy[j + 1] = temp;
+                }
+            }
+        }
+        // Print out sorted array
+        System.out.println("\n          *** Student List ***");
+        for (int i = 0; i < studentCount; i++) {
+            System.out.println("----------------------------------------");
+            System.out.println("Student " + (i + 1));
+            System.out.println("==>Student ID: " + studentCopy[i].getStID());
+            System.out.println("==>Student Name: " + studentCopy[i].getStName());
+        }
+        System.out.println("----------------------------------------\n>>Press Enter to continue<<");
+        userInput.nextLine();
     }
 
+    //* Task 2
+
+    /**
+     * Extra Menu Items in task 2
+     */
     private static void extraMenu() {
         while (true) {
             System.out.println("\n==============================\n*   Additional Menu Items    *\n==============================\n");
@@ -186,8 +209,7 @@ public class Main {
             System.out.println("b) Add Module Marks");
             System.out.println("c) Summery");
             System.out.println("d) Report");
-
-            System.out.println("e) <== Back");
+            System.out.println("q) <== Back");
 
 
             System.out.print("Enter your choice: ");
@@ -205,11 +227,11 @@ public class Main {
                 case "d":
                     report();
                     break;
-                case "e":
+                case "q":
                     System.out.println("\nGoing to previous menu...\n");
                     return;
                 default:
-                    System.out.println("\nMenu Item Does not exist! Please choose a valid item.\n<<Press Enter to continue>>");
+                    System.out.println("\nMenu Item Does not exist! Please choose a valid item.\n>>Press Enter to continue<<");
                     userInput.nextLine();
                     userInput.nextLine();
             }
@@ -224,9 +246,37 @@ public class Main {
         String id;
         String name;
 
+        System.out.println("\n");
         // Loop until Correct ID is provided
         do {
-            System.out.print("\nEnter student ID to add name: ");
+            System.out.print("Enter student ID to add name: ");
+            id = userInput.next();
+            userInput.nextLine();
+        } while (idValidation(id, false));
+        // Loop to iterate through the students
+        for (Student student : students) {
+            // If student array element is null then break the loop
+            if (student == null) {
+                break;
+            }
+            if (student.getStID().equals(id)) {// Checks for the similar id
+                System.out.print("\nUpdate student name: ");
+                name = userInput.nextLine().toUpperCase();
+                student.setStName(name);
+                System.out.println("\n*** Student name updated successfully ***\n>>Press Enter to continue<<");
+                userInput.nextLine();
+            }
+        }
+    }
+
+    /**
+     * Method adds Module marks to each student
+     */
+    private static void addModuleMarks() {
+        String id;
+        System.out.println("\n");
+        do {
+            System.out.print("Enter student ID to add module marks: ");
             id = userInput.next();
             userInput.nextLine();
         } while (idValidation(id, false));
@@ -236,38 +286,34 @@ public class Main {
             // If student array element is null then break the loop
             if (student == null) {
                 break;
-            } else if (student.getStID().equals(id)) {// Checks for the similar id
-                if (student.getStName() != null){// if student name was provided in the registration then ask to update
-                    System.out.print("Student Name has already been assigned. Would you like to update? (y/n) ");
-                    String choice = userInput.next().toLowerCase();
-                    userInput.nextLine();
-                    // Choice validation
-                    if (choice.equals("y") || choice.equals("yes")) {
-                        System.out.print("\nEnter new name: ");
-                        name = userInput.nextLine().toUpperCase();
-                        student.setStName(name);
-                        System.out.println("*** Student name updated successfully ***\n<<Press Enter to continue>>");
-                        userInput.nextLine();
-                    } else if (choice.equals("n") || choice.equals("no")) {
-                        System.out.println("*** Student name update canceled ***\n<<Press Enter to continue>>");
-                        userInput.nextLine();
-                        break;
-                    } else {
-                        System.out.println("\nInvalid response. Enter (y / yes) or (n / no)\n");
-                    }
+            }
+            // IF ID matches then update module marks
+            if (student.getStID().equals(id)) {// Checks for the similar id
+                for (int i = 0; i < student.getModules().length; i++) {
+                    while (true) {
+                        try {
+                            System.out.print("Enter marks of module " + (i + 1) + ": ");
+                            double mark = userInput.nextDouble();
+                            userInput.nextLine();
 
-                } else {// If not provided in registration then add new name
-                    System.out.print("\nEnter student name: ");
-                    name = userInput.nextLine().toUpperCase();
-                    student.setStName(name);
-                    System.out.println("*** Student name added successfully ***\n<<Press Enter to continue>>");
-                    userInput.nextLine();
+                            if (mark < 0 || mark > 100) {
+                                System.out.println("Invalid Marks");
+                                continue;
+                            }
+
+                            student.getModules()[i] = new Module(mark);
+                            break;
+                        } catch (InputMismatchException e) {
+                            System.out.println("Enter a Number");
+                            userInput.nextLine();
+                        }
+                    }
                 }
+                System.out.println("\n*** Module marks have been updated ***\n>>Press Enter to continue<<");
+                userInput.nextLine();
+                break;
             }
         }
-    }
-
-    private static void addModuleMarks() {
     }
 
     private static void summery() {
