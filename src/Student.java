@@ -27,4 +27,7 @@ public class Student {
         this.stName = stName;
     }
 
+    public Module[] getModules() {
+        return modules;
+    }
 }

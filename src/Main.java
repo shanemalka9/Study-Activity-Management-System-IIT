@@ -70,7 +70,6 @@ public class Main {
                 userInput.nextLine();// Clear userInput
                 userInput.nextLine();// Pauses until user presses enter
             }
-
         }
     }
 
@@ -78,7 +77,7 @@ public class Main {
      * Subtracts total the student count form total number of students
      */
     private static void checkAvailableSeats() {
-        System.out.println("Total Number of Available Seats are: " + (maxStudents - studentCount) + "\n<<Press Enter to continue>>");
+        System.out.println("\nTotal Number of Available Seats are: " + (maxStudents - studentCount) + "\n<<Press Enter to continue>>");
         userInput.nextLine();
     }
 
@@ -90,25 +89,12 @@ public class Main {
         String id;
         String name;
 
-        while (true) {
+        do {
             System.out.print("Enter a student ID(Ex: w1234567): ");
             id = userInput.next();
             userInput.nextLine();
+        } while (idValidation(id, true));
 
-            if (id.length() == 8) {// Check if length is 8 characters
-                if (id.charAt(0) == 'w') {// Check if first letter is 'w'
-                    if (checkSimilarID(id)) {// Check if ID already exists
-                        break;
-                    } else {
-                        System.out.println("\nThis ID already exists. Please re-enter\n");
-                    }
-                } else {
-                    System.out.println("\n'w' at the beginning is missing. Please re-enter\n");
-                }
-            } else {
-                System.out.println("\nID length should be 8 characters. Please re-enter\n");
-            }
-        }
         System.out.print("Enter your First name: ");
         name = userInput.next().toUpperCase();
 
@@ -116,12 +102,54 @@ public class Main {
         studentCount++;// Increment counter by 1
         System.out.println("New Student seat reserved\n<<Press Enter to continue>>");
         userInput.nextLine();
+        userInput.nextLine();
     }
 
+    /**
+     *  This function is used to delete entries in the array.
+     */
     private static void delete() {
+        String id;
+
+        //? How does the user know which ID to delete
+        //TODO: Implement a method to display ids to the user
+
+        do {
+            System.out.print("Enter Student ID of entry you want to delete: ");
+            id = userInput.next();
+        } while (idValidation(id, false));
+
+
+        for (int i = 0; i < students.length; i++) {// Loop through all elements in array
+            if (students[i].getStID().equals(id)) {// Check until Student ID is equal to the user input
+                for (int j = i; j < students.length - 1; j++) {
+                    students[j] = students[j + 1];// Shift all elements 1 step to the left
+                }
+                students[students.length - 1] = null; // Set the last element to null after shifting
+                break; // Exit the loop once the element is deleted
+            }
+        }
+        System.out.println("Student entry deleted successfully.");
     }
 
     private static void search() {
+        String id;
+
+        do {
+            System.out.print("Enter student ID to search: ");
+            id = userInput.next();
+        } while (idValidation(id, false));
+
+        for (Student student: students) {
+            if (student == null) {
+                break;
+            }else if (student.getStID().equals(id)) {
+                System.out.println("<< Search results >>");
+                System.out.println("Student ID: " + student.getStID());
+                System.out.println("Student Name: " + student.getStName());
+                System.out.println("Student marks: " + student.getModules()[0] + student.getModules()[1] + student.getModules()[2]);//TODO: Need to add functionality to view marks of students and if not provided send a message
+            }
+        }
     }
 
     private static void exportDetails() {
@@ -183,6 +211,40 @@ public class Main {
     }
 
     //* Extra Functions
+
+    /**
+     * Method used to check the validity of any given ID
+     * @param id-this is the provided ID
+     * @param register- This is to differentiate between the 'register' and ' delete' methods
+     * @return boolean value depending on the method calling it
+     */
+    private static boolean idValidation(String id, boolean register) {
+        if (id.length() == 8) {// Check if length is 8 characters
+            if (id.charAt(0) == 'w') {// Check if first letter is 'w'
+                if (checkSimilarID(id)) {// Check if ID already exists
+                    if (register) {
+                        return false;
+                    } else {
+                        System.out.println("\nThis ID does not exist. Please re-enter\n");
+                        return true;
+                    }
+                } else {
+                    if (register) {
+                        System.out.println("\nThis ID already exists. Please re-enter\n");
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            } else {
+                System.out.println("\n'w' at the beginning is missing. Please re-enter\n");
+                return true;
+            }
+        } else {
+            System.out.println("\nID length should be 8 characters. Please re-enter\n");
+            return true;
+        }
+    }
 
     /**
      * A function specifically used to see if the ID that the user has input is unique and is not already in use
