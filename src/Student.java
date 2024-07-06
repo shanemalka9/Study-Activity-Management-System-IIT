@@ -5,6 +5,11 @@ public class Student {
     private String stName;
     private Module[] modules;
 
+    public Student(String ID) {
+        this.stID = ID;
+        modules = new Module[3];
+    }
+
     public Student(String ID, String name) {
         this.stID = ID;
         this.stName = name;
