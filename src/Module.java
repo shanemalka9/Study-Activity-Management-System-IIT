@@ -10,8 +10,4 @@ public class Module {
     public double getModuleMarks() {
         return moduleMarks;
     }
-
-    public void setModuleMarks(double moduleMarks) {
-        this.moduleMarks = moduleMarks;
-    }
 }

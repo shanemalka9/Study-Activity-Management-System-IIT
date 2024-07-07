@@ -25,6 +25,7 @@ public class Student {
     }
 
     public void setStName(String stName) {
+
         this.stName = stName;
     }
 
@@ -32,4 +33,12 @@ public class Student {
         return modules;
     }
 
+    public double getMarks(){
+        for (int i = 0; i < modules.length; i++) {
+            if (this.modules[i] != null){
+                System.out.println();
+                //TODO: FFinish this function
+            }
+        }
+    }
 }

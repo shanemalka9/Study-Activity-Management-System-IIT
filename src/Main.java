@@ -106,13 +106,24 @@ public class Main {
      */
     private static void delete() {
         String id;
-
+        // Prompts the user a question asking if they want to view the list of students to find the student ID needed to be deleted
+        while (true) {
+            System.out.print("Would you like to view student list? (y/n) ");
+            String choice = userInput.next().toLowerCase();
+            userInput.nextLine();
+            if (choice.equals("y") || choice.equals("yes")) {
+                view();
+                break;
+            } else if (choice.equals("n") || choice.equals("no")) {
+                break;
+            } else {
+                System.out.println("\nInvalid response. Enter (y / yes) or (n / no)\n");
+            }
+        }
         do {
             System.out.print("Enter Student ID of entry you want to delete: ");
             id = userInput.next();
         } while (idValidation(id, false));
-
-
         for (int i = 0; i < studentCount; i++) {// Loop through all elements in array
             if (students[i].getStID().equals(id)) {// Check until Student ID is equal to the user input
                 for (int j = i; j < studentCount - 1; j++) {
@@ -317,6 +328,10 @@ public class Main {
     }
 
     private static void summery() {
+        System.out.println("\n          *** Summery ***\n-------------------------");
+        System.out.println("The total number of students registered is: " + studentCount);
+        System.out.println("Total number of students with marks for each module above 40: ");
+        //TODO: Finish this function
     }
 
     private static void report() {
