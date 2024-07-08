@@ -75,7 +75,7 @@ public class Main {
      * Subtracts total the student count form total number of students
      */
     private static void checkAvailableSeats() {
-        System.out.println("\nTotal Number of Available Seats are: " + (maxStudents - studentCount) + "\n>>Press Enter to continue<<");
+        System.out.println("\nTotal Number of Available Seats are: " + (maxStudents - studentCount) + "\n\n>>Press Enter to continue<<");
         userInput.nextLine();
     }
 
@@ -90,14 +90,18 @@ public class Main {
             System.out.print("\nEnter a student ID(Ex: w1234567): ");
             id = userInput.next();
             userInput.nextLine();
+            // if user enters "q" then it exits the method
+            if (id.equals("q")) {
+                return;
+            }
         } while (idValidation(id, true));
 
-        System.out.print("Enter your name: ");
-        String name = userInput.nextLine().toUpperCase();
+        String name = nameEmptyCheck();
+
         students[studentCount] = new Student(id, name);// If id is valid then create a Student object and add it to the main array
 
         studentCount++;// Increment counter by 1
-        System.out.println("*** New Student seat reserved ***\n>>Press Enter to continue<<");
+        System.out.println("\n*** New Student seat reserved ***\n>>Press Enter to continue<<");
         userInput.nextLine();
     }
 
@@ -107,19 +111,8 @@ public class Main {
     private static void delete() {
         String id;
         // Prompts the user a question asking if they want to view the list of students to find the student ID needed to be deleted
-        while (true) {
-            System.out.print("Would you like to view student list? (y/n) ");
-            String choice = userInput.next().toLowerCase();
-            userInput.nextLine();
-            if (choice.equals("y") || choice.equals("yes")) {
-                view();
-                break;
-            } else if (choice.equals("n") || choice.equals("no")) {
-                break;
-            } else {
-                System.out.println("\nInvalid response. Enter (y / yes) or (n / no)\n");
-            }
-        }
+        askView();
+
         do {
             System.out.print("Enter Student ID of entry you want to delete: ");
             id = userInput.next();
@@ -148,6 +141,9 @@ public class Main {
             System.out.print("\nEnter student ID to search: ");
             id = userInput.next();
             userInput.nextLine();
+            if (id.equals("q")) {
+                return;
+            }
         } while (idValidation(id, false));
 
         for (Student student : students) {
@@ -162,7 +158,7 @@ public class Main {
                 System.out.println("Student marks: ");
 
                 for (int i = 0; i < student.getModules().length; i++) {
-                    System.out.print("Module " + (i + 1) + " : ");
+                    System.out.print("==> Module " + (i + 1) + " : ");
                     if (student.getModules()[i] == null) {
                         System.out.println("Marks Unavailable");
                     } else {
@@ -187,6 +183,13 @@ public class Main {
     private static void view() {
         Student[] studentCopy = students.clone();// Cloned array as to not change original array
         // Bubble sort for view functions
+
+        if (studentCopy[0] == null){
+            System.out.println("\nNo students have registered. Going back.\n>>Press Enter to continue<<");
+            userInput.nextLine();
+            return;
+        }
+
         for (int i = 0; i < studentCount - 1; i++) {
             for (int j = 0; j < studentCount - 1 - i; j++) {
                 if (studentCopy[j].getStName().compareTo(studentCopy[j + 1].getStName()) > 0) {
@@ -204,11 +207,11 @@ public class Main {
             System.out.println("==>Student ID: " + studentCopy[i].getStID());
             System.out.println("==>Student Name: " + studentCopy[i].getStName());
         }
-        System.out.println("----------------------------------------\n>>Press Enter to continue<<");
+        System.out.println("----------------------------------------\n\n>>Press Enter to continue<<");
         userInput.nextLine();
     }
 
-    //* Task 2
+    //********** Task 2 **********
 
     /**
      * Extra Menu Items in task 2
@@ -233,7 +236,7 @@ public class Main {
                     addModuleMarks();
                     break;
                 case "c":
-                    summery();
+                    summary();
                     break;
                 case "d":
                     report();
@@ -258,11 +261,17 @@ public class Main {
         String name;
 
         System.out.println("\n");
+
+        askView();
+
         // Loop until Correct ID is provided
         do {
             System.out.print("Enter student ID to add name: ");
             id = userInput.next();
             userInput.nextLine();
+            if (id.equals("q")) {
+                return;
+            }
         } while (idValidation(id, false));
         // Loop to iterate through the students
         for (Student student : students) {
@@ -271,8 +280,7 @@ public class Main {
                 break;
             }
             if (student.getStID().equals(id)) {// Checks for the similar id
-                System.out.print("\nUpdate student name: ");
-                name = userInput.nextLine().toUpperCase();
+                name = nameEmptyCheck();
                 student.setStName(name);
                 System.out.println("\n*** Student name updated successfully ***\n>>Press Enter to continue<<");
                 userInput.nextLine();
@@ -286,11 +294,19 @@ public class Main {
     private static void addModuleMarks() {
         String id;
         System.out.println("\n");
+
+        askView();
+
         do {
             System.out.print("Enter student ID to add module marks: ");
             id = userInput.next();
             userInput.nextLine();
+            if (id.equals("q")) {
+                return;
+            }
         } while (idValidation(id, false));
+
+        System.out.println("\n");
 
         // Loop to iterate through the students
         for (Student student : students) {
@@ -311,7 +327,6 @@ public class Main {
                                 System.out.println("Invalid Marks");
                                 continue;
                             }
-
                             student.getModules()[i] = new Module(mark);
                             break;
                         } catch (InputMismatchException e) {
@@ -327,17 +342,37 @@ public class Main {
         }
     }
 
-    private static void summery() {
-        System.out.println("\n          *** Summery ***\n-------------------------");
+    /**
+     * Gives a summary if the batch of students
+     * Totals number of students registered
+     * Total number of students who has got Marks >= 40 in each Module
+     */
+    private static void summary() {
+        int count = 0;
+        System.out.println("\n          *** Summary ***\n-------------------------");
         System.out.println("The total number of students registered is: " + studentCount);
-        System.out.println("Total number of students with marks for each module above 40: ");
-        //TODO: Finish this function
+
+        for (Student student: students) {
+            if (student == null) {
+                break;
+            }
+            if (student.getModules()[0].getModuleMarks() >= 40 && student.getModules()[1].getModuleMarks() >= 40 && student.getModules()[2].getModuleMarks() >= 40) {
+                count++;
+            }
+        }
+
+        System.out.println("Total number of students with marks for each module above 40: " + count);
+        System.out.println("\n>>Press Enter to continue<<");
+        userInput.nextLine();
+        userInput.nextLine();
     }
 
     private static void report() {
+        System.out.println("\n *** Complete Report ***\n-------------------------");
+
     }
 
-    //* Extra Functions
+    //********** Extra Functions **********
 
     /**
      * Method used to check the validity of any given ID
@@ -346,7 +381,7 @@ public class Main {
      * @param register- This is to differentiate between the 'register' and ' delete' methods
      * @return boolean value depending on the method calling it
      */
-    private static boolean idValidation(String id, boolean register) {
+    private static boolean idValidation(String id, boolean register) {//TODO: Add a function to check if last 7 characters are digits
         if (id.length() == 8) {// Check if length is 8 characters
             if (id.charAt(0) == 'w') {// Check if first letter is 'w'
                 if (checkSimilarID(id)) {// Check if ID already exists
@@ -371,6 +406,22 @@ public class Main {
         } else {
             System.out.println("\nID length should be 8 characters. Please re-enter\n");
             return true;
+        }
+    }
+
+    /**
+     * Gets Name and checks if it is empty
+     * @return verified name
+     */
+    private static String nameEmptyCheck(){
+        while (true) {
+            System.out.print("Enter your name: ");
+            String name = userInput.nextLine().toUpperCase();
+            if (name.isEmpty()){
+                System.out.println("\nNo name added!\n");
+                continue;
+            }
+            return name;
         }
     }
 
@@ -401,6 +452,25 @@ public class Main {
         for (Student student : students) {
             if (student != null) {
                 studentCount++;
+            }
+        }
+    }
+
+    /**
+     * Ask user if he wants to view all students and if he does then call the view Method
+     */
+    private static void askView() {
+        while (true) {
+            System.out.print("Would you like to view student list? (y/n) ");
+            String choice = userInput.next().toLowerCase();
+            userInput.nextLine();
+            if (choice.equals("y") || choice.equals("yes")) {
+                view();
+                break;
+            } else if (choice.equals("n") || choice.equals("no")) {
+                break;
+            } else {
+                System.out.println("\nInvalid response. Enter (y / yes) or (n / no)\n");
             }
         }
     }

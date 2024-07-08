@@ -32,13 +32,4 @@ public class Student {
     public Module[] getModules() {
         return modules;
     }
-
-    public double getMarks(){
-        for (int i = 0; i < modules.length; i++) {
-            if (this.modules[i] != null){
-                System.out.println();
-                //TODO: FFinish this function
-            }
-        }
-    }
 }
