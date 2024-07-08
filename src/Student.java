@@ -22,10 +22,6 @@ public class Student {
         return stID;
     }
 
-    public void setStID(String stID) {
-        this.stID = stID;
-    }
-
     public String getStName() {
         return stName;
     }

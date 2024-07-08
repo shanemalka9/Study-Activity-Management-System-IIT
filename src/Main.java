@@ -139,6 +139,7 @@ public class Main {
         System.out.println("Student entry deleted successfully.\n>>Press Enter to continue<<");
         studentCount--;
         userInput.nextLine();
+        userInput.nextLine();
     }
 
 
@@ -166,7 +167,7 @@ public class Main {
                 System.out.println(">> Search results <<");
                 System.out.println("Student ID: " + student.getStID());
                 System.out.println("Student Name: " + student.getStName());
-                System.out.println("Student marks: ");
+                System.out.println("Student marks");
 
                 for (int i = 0; i < student.getModules().length; i++) {
                     System.out.print("==> Module " + (i + 1) + " : ");
@@ -197,7 +198,7 @@ public class Main {
     private static void view() {
         Student[] studentCopy = students.clone();// Cloned array as to not change original array
 
-        if (studentCopy[0] == null){
+        if (studentCopy[0] == null) {
             System.out.println("\nNo students have registered. Going back.\n>>Press Enter to continue<<");
             userInput.nextLine();
             return;
@@ -226,9 +227,7 @@ public class Main {
     }
 
 
-
     //********** Task 2 **********
-
 
 
     /**
@@ -239,35 +238,40 @@ public class Main {
             System.out.println("\n==============================");
             System.out.println("*   Additional Menu Items    *");
             System.out.println("==============================\n");
-            System.out.println("a) Add Student name");
-            System.out.println("b) Add Module Marks");
-            System.out.println("c) Summery");
-            System.out.println("d) Report");
-            System.out.println("q) <== Back");
-
-
+            System.out.println("1) Add Student name");
+            System.out.println("2) Add Module Marks");
+            System.out.println("3) Summery");
+            System.out.println("4) Report");
+            System.out.println("0) <== Back");
             System.out.print("Enter your choice: ");
-            String menuItem = userInput.next().toLowerCase();
-            userInput.nextLine();
-            switch (menuItem) {
-                case "a":
-                    addStudentName();
-                    break;
-                case "b":
-                    addModuleMarks();
-                    break;
-                case "c":
-                    summary();
-                    break;
-                case "d":
-                    report();
-                    break;
-                case "q":
-                    System.out.println("\nGoing to previous menu...\n");
-                    return;
-                default:
-                    System.out.println("\nMenu Item Does not exist! Please choose a valid item.\n>>Press Enter to continue<<");
-                    userInput.nextLine();
+
+            if (userInput.hasNextInt()) {
+                int menuItem = userInput.nextInt();
+                userInput.nextLine();
+                switch (menuItem) {
+                    case 1:
+                        addStudentName();
+                        break;
+                    case 2:
+                        addModuleMarks();
+                        break;
+                    case 3:
+                        summery();
+                        break;
+                    case 4:
+                        report();
+                        break;
+                    case 0:
+                        System.out.println("\nGoing to previous menu...\n");
+                        return;
+                    default:
+                        System.out.println("\nMenu Item Does not exist! Please choose a valid item.\n>>Press Enter to continue<<");
+                        userInput.nextLine();
+                }
+            } else { // If user inputs an invalid value an error message is printed
+                System.out.println("\nMenu Item Does not exist! Please choose a valid item.\n>>Press Enter to continue<<");
+                userInput.nextLine();// Clear userInput
+                userInput.nextLine();// Pauses until user presses enter
             }
         }
     }
@@ -366,16 +370,16 @@ public class Main {
 
 
     /**
-     * Gives a summary if the batch of students
+     * Gives a summery if the batch of students
      * Totals number of students registered
      * Total number of students who has got Marks >= 40 in each Module
      */
-    private static void summary() {
+    private static void summery() {
         int count = 0;
-        System.out.println("\n          *** Summary ***\n-------------------------");
+        System.out.println("\n      *** Summery ***\n-------------------------");
         System.out.println("The total number of students registered is: " + studentCount);
 
-        for (Student student: students) {
+        for (Student student : students) {
             if (student == null) {
                 break;
             }
@@ -390,7 +394,6 @@ public class Main {
         System.out.println("Total number of students with marks for each module above 40: " + count);
         System.out.println("\n>>Press Enter to continue<<");
         userInput.nextLine();
-        userInput.nextLine();
     }
 
     /**
@@ -400,7 +403,7 @@ public class Main {
         Student[] studentCopy = students.clone();// Cloned array as to not change original array
         boolean flag = true;
 
-        if (studentCopy[0] == null){
+        if (studentCopy[0] == null) {
             System.out.println("\nNo students have registered. Going back.\n>>Press Enter to continue<<");
             userInput.nextLine();
             return;
@@ -409,45 +412,45 @@ public class Main {
         // Bubble sort according to average for cloned array to view in report in descending order
         for (int i = 0; i < studentCount - 1; i++) {
             for (int j = 0; j < studentCount - 1 - i; j++) {
-                if (students[j].getModuleAverage(studentCopy[i].getModuleTotal()) < students[j + 1].getModuleAverage(studentCopy[i].getModuleTotal())) {
+                if (studentCopy[j].getModuleAverage(studentCopy[j].getModuleTotal()) < studentCopy[j + 1].getModuleAverage(studentCopy[j + 1].getModuleTotal())) {
                     Student temp = studentCopy[j];
                     studentCopy[j] = studentCopy[j + 1];
                     studentCopy[j + 1] = temp;
                 }
             }
         }
+
         for (int i = 0; i < studentCount; i++) {
             double total = studentCopy[i].getModuleTotal();
             double average = studentCopy[i].getModuleAverage(total);
             String grade = studentCopy[i].getModuleGrade(average);
 
             System.out.println("----------------------------------------");
-            System.out.println("Student " + (i + 1));
-            System.out.println("==>Student ID: " + studentCopy[i].getStID());
-            System.out.println("==>Student Name: " + studentCopy[i].getStName());
-            for (int j = 0; j < students[i].getModules().length; j++) {
-                System.out.print("==> Module " + (j + 1) + " marks: ");
-                if (students[i].getModules()[j] == null) {
+            System.out.println(" Student " + (i + 1));
+            System.out.println("-------------");
+            System.out.println(" Student ID: " + studentCopy[i].getStID());
+            System.out.println(" Student Name: " + studentCopy[i].getStName());
+            for (int j = 0; j < studentCopy[i].getModules().length; j++) {
+                System.out.print("====> Module " + (j + 1) + " marks: ");
+                if (studentCopy[i].getModules()[j] == null) {
                     System.out.println("Marks Unavailable");
                     flag = false;
                 } else {
-                    System.out.println(students[i].getModules()[j].getModuleMarks());
+                    System.out.println(studentCopy[i].getModules()[j].getModuleMarks());
                 }
             }
-             if (flag) {
-                 System.out.println("==> Total Marks: " + total);
-                 System.out.println("==> Average Marks: " + average);
-                 System.out.println("==> Module Grade: " + grade);
-             }
+            if (flag) {
+                System.out.println("==> Total Marks: " + total);
+                System.out.println("==> Average Marks: " + average);
+                System.out.println("==> Module Grade: " + grade);
+            }
         }
         System.out.println("----------------------------------------\n\n>>Press Enter to continue<<");
         userInput.nextLine();
     }
 
 
-
     //********** Extra Functions **********
-
 
 
     /**
@@ -457,7 +460,7 @@ public class Main {
      * @param register- This is to differentiate between the 'register' and ' delete' methods
      * @return boolean value depending on the method calling it
      */
-    private static boolean idValidation(String id, boolean register) {//TODO: Add a function to check if last 7 characters are digits
+    private static boolean idValidation(String id, boolean register) {
         if (id.length() == 8) {// Check if length is 8 characters
             if (id.charAt(0) == 'w') {// Check if first letter is 'w'
                 try {
@@ -466,27 +469,27 @@ public class Main {
                         if (register) {
                             return false;
                         } else {
-                            System.out.println("\nThis ID does not exist. Please re-enter\n");
+                            System.out.println("\nThis ID does not exist. Please try again!\n");
                             return true;
                         }
                     } else {
                         if (register) {
-                            System.out.println("\nThis ID already exists. Please re-enter\n");
+                            System.out.println("\nThis ID already exists. Please try again!\n");
                             return true;
                         } else {
                             return false;
                         }
                     }
-                }  catch (NumberFormatException e) {
-                    System.out.println("\nLetters have been detected after 'w'. Please re-enter\n");
+                } catch (NumberFormatException e) {
+                    System.out.println("\nInvalid ID. Please try again!\n");
                     return true;
                 }
             } else {
-                System.out.println("\n'w' at the beginning is missing. Please re-enter\n");
+                System.out.println("\n'w' at the beginning is missing. Please try again!\n");
                 return true;
             }
         } else {
-            System.out.println("\nID length should be 8 characters. Please re-enter\n");
+            System.out.println("\nID length should be 8 characters. Please try again!\n");
             return true;
         }
     }
@@ -494,13 +497,14 @@ public class Main {
 
     /**
      * Gets Name and checks if it is empty
+     *
      * @return verified name
      */
-    private static String nameEmptyCheck(){
+    private static String nameEmptyCheck() {
         while (true) {
             System.out.print("Enter your name: ");
             String name = userInput.nextLine().toUpperCase();
-            if (name.isEmpty()){
+            if (name.isEmpty()) {
                 System.out.println("\nNo name added!\n");
                 continue;
             }
