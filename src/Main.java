@@ -14,7 +14,9 @@ public class Main {
         while (true) {
             int menuItem;
 
-            System.out.println("==============================\n*         Main Menu          *\n==============================\n");
+            System.out.println("==============================");
+            System.out.println("*         Main Menu          *");
+            System.out.println("==============================\n");
             System.out.println("1) Check Availability Of Seats");
             System.out.println("2) Student Registration");
             System.out.println("3) Delete Student");
@@ -71,6 +73,7 @@ public class Main {
         }
     }
 
+
     /**
      * Subtracts total the student count form total number of students
      */
@@ -79,6 +82,7 @@ public class Main {
         userInput.nextLine();
     }
 
+
     /**
      * Method used to register students
      * User has to input a student ID and, it is checked for its validity
@@ -86,8 +90,10 @@ public class Main {
     private static void register() {
         String id;
 
+        System.out.println("\n");
+
         do {
-            System.out.print("\nEnter a student ID(Ex: w1234567): ");
+            System.out.print("Enter a student ID(Ex: w1234567): ");
             id = userInput.next();
             userInput.nextLine();
             // if user enters "q" then it exits the method
@@ -105,6 +111,7 @@ public class Main {
         userInput.nextLine();
     }
 
+
     /**
      * This function is used to delete entries in the array.
      */
@@ -116,6 +123,9 @@ public class Main {
         do {
             System.out.print("Enter Student ID of entry you want to delete: ");
             id = userInput.next();
+            if (id.equals("q")) {
+                return;
+            }
         } while (idValidation(id, false));
         for (int i = 0; i < studentCount; i++) {// Loop through all elements in array
             if (students[i].getStID().equals(id)) {// Check until Student ID is equal to the user input
@@ -130,6 +140,7 @@ public class Main {
         studentCount--;
         userInput.nextLine();
     }
+
 
     /**
      * Method used to search for a student using Student ID
@@ -171,18 +182,20 @@ public class Main {
         userInput.nextLine();
     }
 
+
     private static void exportDetails() {
     }
 
+
     private static void importDetails() {
     }
+
 
     /**
      * This function views all students names and ID's by sorting them in ascending order by name
      */
     private static void view() {
         Student[] studentCopy = students.clone();// Cloned array as to not change original array
-        // Bubble sort for view functions
 
         if (studentCopy[0] == null){
             System.out.println("\nNo students have registered. Going back.\n>>Press Enter to continue<<");
@@ -190,6 +203,7 @@ public class Main {
             return;
         }
 
+        // Bubble sort for cloned array to view
         for (int i = 0; i < studentCount - 1; i++) {
             for (int j = 0; j < studentCount - 1 - i; j++) {
                 if (studentCopy[j].getStName().compareTo(studentCopy[j + 1].getStName()) > 0) {
@@ -211,14 +225,20 @@ public class Main {
         userInput.nextLine();
     }
 
+
+
     //********** Task 2 **********
+
+
 
     /**
      * Extra Menu Items in task 2
      */
     private static void extraMenu() {
         while (true) {
-            System.out.println("\n==============================\n*   Additional Menu Items    *\n==============================\n");
+            System.out.println("\n==============================");
+            System.out.println("*   Additional Menu Items    *");
+            System.out.println("==============================\n");
             System.out.println("a) Add Student name");
             System.out.println("b) Add Module Marks");
             System.out.println("c) Summery");
@@ -228,6 +248,7 @@ public class Main {
 
             System.out.print("Enter your choice: ");
             String menuItem = userInput.next().toLowerCase();
+            userInput.nextLine();
             switch (menuItem) {
                 case "a":
                     addStudentName();
@@ -247,10 +268,10 @@ public class Main {
                 default:
                     System.out.println("\nMenu Item Does not exist! Please choose a valid item.\n>>Press Enter to continue<<");
                     userInput.nextLine();
-                    userInput.nextLine();
             }
         }
     }
+
 
     /**
      * Function used to add name to a student after registering
@@ -287,6 +308,7 @@ public class Main {
             }
         }
     }
+
 
     /**
      * Method adds Module marks to each student
@@ -342,6 +364,7 @@ public class Main {
         }
     }
 
+
     /**
      * Gives a summary if the batch of students
      * Totals number of students registered
@@ -356,6 +379,9 @@ public class Main {
             if (student == null) {
                 break;
             }
+            if (student.getModules()[0] == null && student.getModules()[1] == null && student.getModules()[2] == null) {
+                continue;
+            }
             if (student.getModules()[0].getModuleMarks() >= 40 && student.getModules()[1].getModuleMarks() >= 40 && student.getModules()[2].getModuleMarks() >= 40) {
                 count++;
             }
@@ -367,12 +393,62 @@ public class Main {
         userInput.nextLine();
     }
 
+    /**
+     * Method to print detailed report of all students
+     */
     private static void report() {
-        System.out.println("\n *** Complete Report ***\n-------------------------");
+        Student[] studentCopy = students.clone();// Cloned array as to not change original array
+        boolean flag = true;
 
+        if (studentCopy[0] == null){
+            System.out.println("\nNo students have registered. Going back.\n>>Press Enter to continue<<");
+            userInput.nextLine();
+            return;
+        }
+
+        // Bubble sort according to average for cloned array to view in report in descending order
+        for (int i = 0; i < studentCount - 1; i++) {
+            for (int j = 0; j < studentCount - 1 - i; j++) {
+                if (students[j].getModuleAverage(studentCopy[i].getModuleTotal()) < students[j + 1].getModuleAverage(studentCopy[i].getModuleTotal())) {
+                    Student temp = studentCopy[j];
+                    studentCopy[j] = studentCopy[j + 1];
+                    studentCopy[j + 1] = temp;
+                }
+            }
+        }
+        for (int i = 0; i < studentCount; i++) {
+            double total = studentCopy[i].getModuleTotal();
+            double average = studentCopy[i].getModuleAverage(total);
+            String grade = studentCopy[i].getModuleGrade(average);
+
+            System.out.println("----------------------------------------");
+            System.out.println("Student " + (i + 1));
+            System.out.println("==>Student ID: " + studentCopy[i].getStID());
+            System.out.println("==>Student Name: " + studentCopy[i].getStName());
+            for (int j = 0; j < students[i].getModules().length; j++) {
+                System.out.print("==> Module " + (j + 1) + " marks: ");
+                if (students[i].getModules()[j] == null) {
+                    System.out.println("Marks Unavailable");
+                    flag = false;
+                } else {
+                    System.out.println(students[i].getModules()[j].getModuleMarks());
+                }
+            }
+             if (flag) {
+                 System.out.println("==> Total Marks: " + total);
+                 System.out.println("==> Average Marks: " + average);
+                 System.out.println("==> Module Grade: " + grade);
+             }
+        }
+        System.out.println("----------------------------------------\n\n>>Press Enter to continue<<");
+        userInput.nextLine();
     }
 
+
+
     //********** Extra Functions **********
+
+
 
     /**
      * Method used to check the validity of any given ID
@@ -384,20 +460,26 @@ public class Main {
     private static boolean idValidation(String id, boolean register) {//TODO: Add a function to check if last 7 characters are digits
         if (id.length() == 8) {// Check if length is 8 characters
             if (id.charAt(0) == 'w') {// Check if first letter is 'w'
-                if (checkSimilarID(id)) {// Check if ID already exists
-                    if (register) {
-                        return false;
+                try {
+                    Integer.parseInt(id.substring(1));
+                    if (checkSimilarID(id)) {// Check if ID already exists
+                        if (register) {
+                            return false;
+                        } else {
+                            System.out.println("\nThis ID does not exist. Please re-enter\n");
+                            return true;
+                        }
                     } else {
-                        System.out.println("\nThis ID does not exist. Please re-enter\n");
-                        return true;
+                        if (register) {
+                            System.out.println("\nThis ID already exists. Please re-enter\n");
+                            return true;
+                        } else {
+                            return false;
+                        }
                     }
-                } else {
-                    if (register) {
-                        System.out.println("\nThis ID already exists. Please re-enter\n");
-                        return true;
-                    } else {
-                        return false;
-                    }
+                }  catch (NumberFormatException e) {
+                    System.out.println("\nLetters have been detected after 'w'. Please re-enter\n");
+                    return true;
                 }
             } else {
                 System.out.println("\n'w' at the beginning is missing. Please re-enter\n");
@@ -408,6 +490,7 @@ public class Main {
             return true;
         }
     }
+
 
     /**
      * Gets Name and checks if it is empty
@@ -424,6 +507,7 @@ public class Main {
             return name;
         }
     }
+
 
     /**
      * A function specifically used to see if the ID that the user has input is unique and is not already in use
@@ -445,6 +529,7 @@ public class Main {
         return !find;
     }
 
+
     /**
      * Finds the number of seats already reserved by counting till null
      */
@@ -455,6 +540,7 @@ public class Main {
             }
         }
     }
+
 
     /**
      * Ask user if he wants to view all students and if he does then call the view Method
