@@ -373,6 +373,7 @@ public class Main {
                     case 2:
                         addModuleMarks();
                         break;
+                    //********* Task 3 *********
                     case 3:
                         summery();
                         break;
