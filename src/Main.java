@@ -61,8 +61,8 @@ public class Main {
                         extraMenu();
                         break;
                     case 0:
-                        userInput.close();
                         exportDetails();
+                        userInput.close();
                         System.out.println("Exiting....");
                         return;
                     default:
@@ -95,7 +95,7 @@ public class Main {
         String id;
         System.out.println("\n");
 
-        // Get ID and verify using idVerification Method
+        // Get ID and verify using idValidation() Method in register mode
         do {
             System.out.print("Enter a student ID(Ex: w1234567): ");
             id = userInput.next();
@@ -120,6 +120,7 @@ public class Main {
      * This function is used to delete entries in the array.
      */
     private static void delete() {
+        // Check if there are no students
         if (studentCount == 0) {
             System.out.println("\nNo Students registered.");
         } else {
@@ -127,6 +128,7 @@ public class Main {
             // Prompts the user a question asking if they want to view the list of students to find the student ID needed to be deleted
             askView();
 
+            // ID validation using idValidation() method in normal mode
             do {
                 System.out.print("Enter Student ID of entry you want to delete: ");
                 id = userInput.next();
@@ -135,6 +137,8 @@ public class Main {
                     return;
                 }
             } while (idValidation(id, false));
+
+            // Shift element to the left by one replacing the element wanted to be deleted
             for (int i = 0; i < studentCount; i++) {// Loop through all elements in array
                 if (students[i].getStID().equals(id)) {// Check until Student ID is equal to the user input
                     for (int j = i; j < studentCount - 1; j++) {
@@ -155,11 +159,11 @@ public class Main {
      * Method used to search for a student using Student ID
      */
     private static void search() {
+        // Check if there are no students
         if (studentCount == 0) {
             System.out.println("\nNo Students registered.");
         } else {
             String id;
-
             do {
                 System.out.print("\nEnter student ID to search: ");
                 id = userInput.next();
@@ -169,11 +173,14 @@ public class Main {
                 }
             } while (idValidation(id, false));
 
-            for (Student student : students) {// Iterate through the students array
+            // Iterate through the students array
+            for (Student student : students) {
+                // Until Student becomes null
                 if (student == null) {
                     break;// Break loop if student is null.
                 }
-                if (student.getStID().equals(id)) {// True if user input ID is equal to an ID in an object in students array
+                // True if user input ID is equal to an ID in an object in students array
+                if (student.getStID().equals(id)) {
 
                     System.out.println(">> Search results <<");
                     System.out.println("Student ID: " + student.getStID());
@@ -203,41 +210,57 @@ public class Main {
     private static void exportDetails() {
         boolean flag = false;
 
+        // Try-with-resource statement to write to file
         try (FileWriter fileWrite = new FileWriter(fileName)) {
+            // Iterate through array until student becomes null
             for (Student student : students) {
+                // Break from loop when student is equal to null
                 if (student == null) {
                     fileWrite.close();
                     break;
                 }
+                // Check if Module array has null entries
                 for (int i = 0; i < student.getModules().length; i++) {
                     if (student.getModules()[i] == null) {
                         flag = true;
                     }
                 }
+                // If a null value is found in module then write only the ID and name
                 if (flag) {
                     fileWrite.write(student.getInfo() + "\n");
                     continue;
                 }
 
+                // If module is not null then write all
                 fileWrite.write(student.getAllInfo() + "\n");
             }
+            System.out.println("All data has successfully been saved to the file.");
+            System.out.println("\n>>Press Enter to continue<<");
+            userInput.nextLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
+    /**
+     * Method used to import data from 'student.txt'
+     * @param begin- used to check if the function is called at the beginning or later
+     *             because if it's called later we need to check if there are similar student IDs, so we don't get repeating values
+     */
     private static void importDetails(boolean begin) {
         try {
             File file = new File(fileName);
 
+            // Check if file exists
             if (!file.exists()) {
-                exportDetails();
+                exportDetails();// If not export method is called thus creating a file
                 System.out.println("File does not exist! New file created.");
                 System.out.println(">>Press Enter to continue<<");
                 userInput.nextLine();
                 return;
             }
+            // Check if file has data
             if (file.length() == 0) {
                 System.out.println("File is empty!");
                 System.out.println(">>Press Enter to continue<<");
@@ -246,31 +269,33 @@ public class Main {
             }
             Scanner readFile = new Scanner(file);
 
+            // If file has next line
             while (readFile.hasNextLine()) {
-                String ID = readFile.next();
+                String ID = readFile.next();// Read ID
+                // If called mid-program then check if ID is repeated
                 if (!begin) {
                     boolean flag = false;
                     for (int i = 0; i < studentCount; i++) {
-                        if (students[i].getStID().equals(ID)){
+                        if (students[i].getStID().equals(ID)) {
                             flag = true;
                             break;
                         }
                     }
                     if (flag) {
-                        continue;
+                        continue;// If id is repeated then skip that iteration
                     }
                 }
                 String name = readFile.next();
-                if (readFile.hasNextDouble()) {
+                // Check if file has marks
+                if (readFile.hasNextDouble()) {// If it does then assign to variables and create object with it
                     double mark1 = readFile.nextDouble();
                     double mark2 = readFile.nextDouble();
                     double mark3 = readFile.nextDouble();
                     students[studentCount] = new Student(ID, name, mark1, mark2, mark3);
                     studentCount++;
-                } else {
+                } else { // else call create object with no marks
                     students[studentCount] = new Student(ID, name);
                     studentCount++;
-
                 }
             }
             readFile.close();
@@ -290,6 +315,7 @@ public class Main {
     private static void view() {
         Student[] studentCopy = students.clone();// Cloned array as to not change original array
 
+        // CHeck if there are any students
         if (studentCopy[0] == null) {
             System.out.println("\nNo students have registered. Going back.\n>>Press Enter to continue<<");
             userInput.nextLine();
@@ -440,7 +466,7 @@ public class Main {
                             System.out.print("Enter marks of module " + (i + 1) + ": ");
                             double mark = userInput.nextDouble();
                             userInput.nextLine();
-
+                            // Check mark validity
                             if (mark < 0 || mark > 100) {
                                 System.out.println("Invalid Marks");
                                 continue;
@@ -469,11 +495,11 @@ public class Main {
     private static void summery() {
         int count = 0;
         System.out.println("\n      *** Summery ***\n-------------------------");
+        // Check if student count is 0
         if (studentCount == 0) {
             System.out.println("\nNo Students registered.");
         } else {
             System.out.println("The total number of students registered is: " + studentCount);
-
             for (Student student : students) {
                 if (student == null) {
                     break;
@@ -526,15 +552,18 @@ public class Main {
             System.out.println("-------------");
             System.out.println(" Student ID: " + studentCopy[i].getStID());
             System.out.println(" Student Name: " + studentCopy[i].getStName());
+            // For loop to iterate through each module and get marks
             for (int j = 0; j < studentCopy[i].getModules().length; j++) {
                 System.out.print("====> Module " + (j + 1) + " marks: ");
+                // If module is null execute
                 if (studentCopy[i].getModules()[j] == null) {
                     System.out.println("Marks Unavailable");
                     flag = false;
-                } else {
+                } else {// else print marks
                     System.out.println(studentCopy[i].getModules()[j].getModuleMarks());
                 }
             }
+            // if marks are available then print the total average and grade
             if (flag) {
                 System.out.println("==> Total Marks: " + total);
                 System.out.println("==> Average Marks: " + average);
