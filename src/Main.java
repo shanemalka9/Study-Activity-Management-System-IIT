@@ -1,5 +1,6 @@
 import java.util.*;
 
+//********* Task 1 *********
 
 public class Main {
 
@@ -12,11 +13,11 @@ public class Main {
         studentCount();
 
         while (true) {
-            int menuItem;
-
             System.out.println("==============================");
             System.out.println("*         Main Menu          *");
-            System.out.println("==============================\n");
+            System.out.println("==============================");
+            System.out.println("Note: Typing in 'q' while inputting student ID and submitting will quit the procedure.");
+            System.out.println("------------------------------\n");
             System.out.println("1) Check Availability Of Seats");
             System.out.println("2) Student Registration");
             System.out.println("3) Delete Student");
@@ -29,7 +30,7 @@ public class Main {
             System.out.print("Enter your choice: ");
             // Checks if user has inputted an integer
             if (userInput.hasNextInt()) {
-                menuItem = userInput.nextInt();
+                int menuItem = userInput.nextInt();
                 userInput.nextLine();
                 // Checks if the user has selected a menu item between 1 and 8
                 switch (menuItem) {
@@ -64,7 +65,6 @@ public class Main {
                         System.out.println("\nMenu Item Does Not Exist.\n>>Press Enter to continue<<");
                         userInput.nextLine();
                 }
-
             } else { // If user inputs an invalid value an error message is printed
                 System.out.println("\nMenu Item Does not exist! Please choose a valid item.\n>>Press Enter to continue<<");
                 userInput.nextLine();// Clear userInput
@@ -75,7 +75,7 @@ public class Main {
 
 
     /**
-     * Subtracts total the student count form total number of students
+     * Subtracts total the student count form total number of seats to get remaining number of seats
      */
     private static void checkAvailableSeats() {
         System.out.println("\nTotal Number of Available Seats are: " + (maxStudents - studentCount) + "\n\n>>Press Enter to continue<<");
@@ -89,9 +89,9 @@ public class Main {
      */
     private static void register() {
         String id;
-
         System.out.println("\n");
 
+        // Get ID and verify using idVerification Method
         do {
             System.out.print("Enter a student ID(Ex: w1234567): ");
             id = userInput.next();
@@ -123,6 +123,7 @@ public class Main {
         do {
             System.out.print("Enter Student ID of entry you want to delete: ");
             id = userInput.next();
+            userInput.nextLine();
             if (id.equals("q")) {
                 return;
             }
@@ -138,7 +139,6 @@ public class Main {
         }
         System.out.println("Student entry deleted successfully.\n>>Press Enter to continue<<");
         studentCount--;
-        userInput.nextLine();
         userInput.nextLine();
     }
 
@@ -158,17 +158,18 @@ public class Main {
             }
         } while (idValidation(id, false));
 
-        for (Student student : students) {
+        for (Student student : students) {// Iterate through the students array
             if (student == null) {
-                break;
+                break;// Break loop if student is null.
             }
-            if (student.getStID().equals(id)) {
+            if (student.getStID().equals(id)) {// True if user input ID is equal to an ID in an object in students array
 
                 System.out.println(">> Search results <<");
                 System.out.println("Student ID: " + student.getStID());
                 System.out.println("Student Name: " + student.getStName());
                 System.out.println("Student marks");
 
+                // Loop to check if marks ara available or not and print them
                 for (int i = 0; i < student.getModules().length; i++) {
                     System.out.print("==> Module " + (i + 1) + " : ");
                     if (student.getModules()[i] == null) {
@@ -419,6 +420,7 @@ public class Main {
                 }
             }
         }
+        System.out.println("\n-------------------------\n *** Complete Report ***\n-------------------------");
 
         for (int i = 0; i < studentCount; i++) {
             double total = studentCopy[i].getModuleTotal();
@@ -463,17 +465,17 @@ public class Main {
     private static boolean idValidation(String id, boolean register) {
         if (id.length() == 8) {// Check if length is 8 characters
             if (id.charAt(0) == 'w') {// Check if first letter is 'w'
-                try {
+                try {// Try statement to catch error if characters ID after 'w' are all digits and not letters
                     Integer.parseInt(id.substring(1));
                     if (checkSimilarID(id)) {// Check if ID already exists
-                        if (register) {
+                        if (register) {// If called from register method this is executed
                             return false;
                         } else {
                             System.out.println("\nThis ID does not exist. Please try again!\n");
                             return true;
                         }
                     } else {
-                        if (register) {
+                        if (register) {// If called from register method this is executed
                             System.out.println("\nThis ID already exists. Please try again!\n");
                             return true;
                         } else {

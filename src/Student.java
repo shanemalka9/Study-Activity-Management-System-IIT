@@ -57,8 +57,8 @@ public class Student {
      * @return average- average marks
      */
     public double getModuleAverage(double total) {
-
-        return total/ this.modules.length;
+        String fAvg = String.format("%.2f", total/ this.modules.length);
+        return  Double.parseDouble(fAvg);
     }
 
     /**
