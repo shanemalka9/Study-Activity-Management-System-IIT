@@ -88,12 +88,12 @@ public class Student {
     }
 
     public String getAllInfo() {
-        String template = "%s %s %.2f %.2f %.2f";
+        String template = "%s,%s,%.2f,%.2f,%.2f";
         return String.format(template, stID, stName, modules[0].getModuleMarks(), modules[1].getModuleMarks(), modules[2].getModuleMarks());
     }
 
     public String getInfo(){
-        String template = "%s %s";
+        String template = "%s,%s";
         return String.format(template, stID, stName);
     }
 }

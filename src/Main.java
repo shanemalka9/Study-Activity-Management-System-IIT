@@ -245,8 +245,9 @@ public class Main {
 
     /**
      * Method used to import data from 'student.txt'
+     *
      * @param begin- used to check if the function is called at the beginning or later
-     *             because if it's called later we need to check if there are similar student IDs, so we don't get repeating values
+     *               because if it's called later we need to check if there are similar student IDs, so we don't get repeating values
      */
     private static void importDetails(boolean begin) {
         try {
@@ -254,8 +255,9 @@ public class Main {
 
             // Check if file exists
             if (!file.exists()) {
-                exportDetails();// If not export method is called thus creating a file
-                System.out.println("File does not exist! New file created.");
+                if (file.createNewFile()) {
+                    System.out.println("File does not exist! New file created.");
+                }
                 System.out.println(">>Press Enter to continue<<");
                 userInput.nextLine();
                 return;
@@ -271,32 +273,29 @@ public class Main {
 
             // If file has next line
             while (readFile.hasNextLine()) {
-                String ID = readFile.next();// Read ID
-                // If called mid-program then check if ID is repeated
-                if (!begin) {
-                    boolean flag = false;
-                    for (int i = 0; i < studentCount; i++) {
-                        if (students[i].getStID().equals(ID)) {
-                            flag = true;
-                            break;
-                        }
-                    }
-                    if (flag) {
-                        continue;// If id is repeated then skip that iteration
-                    }
+                String[] line = readFile.nextLine().split(",");
+                if (idValidation(line[0], true)) {
+                    continue;
                 }
-                String name = readFile.next();
+
                 // Check if file has marks
-                if (readFile.hasNextDouble()) {// If it does then assign to variables and create object with it
-                    double mark1 = readFile.nextDouble();
-                    double mark2 = readFile.nextDouble();
-                    double mark3 = readFile.nextDouble();
-                    students[studentCount] = new Student(ID, name, mark1, mark2, mark3);
-                    studentCount++;
-                } else { // else call create object with no marks
-                    students[studentCount] = new Student(ID, name);
+                if (line.length == 5) {// If it does then assign to variables and create object with it
+                    double mark1 = Double.parseDouble(line[2]);
+                    double mark2 = Double.parseDouble(line[3]);
+                    double mark3 = Double.parseDouble(line[4]);
+                    if (markValidation(mark1) && markValidation(mark2) && markValidation(mark3)) {
+                        students[studentCount] = new Student(line[0].strip(), line[1].toUpperCase(), mark1, mark2, mark3);
+                        studentCount++;
+                    }
+                } else if (line.length == 2) { // else call create object with no marks
+                    students[studentCount] = new Student(line[0].strip(), line[1].toUpperCase());
                     studentCount++;
                 }
+            }
+            System.out.println("Data loaded from file");
+            if (!begin) {// If method is called at the start then these don't run
+                System.out.println(">>Press Enter to continue<<");
+                userInput.nextLine();
             }
             readFile.close();
         } catch (IOException e) {
@@ -325,7 +324,7 @@ public class Main {
         // Bubble sort for cloned array to view
         for (int i = 0; i < studentCount - 1; i++) {
             for (int j = 0; j < studentCount - 1 - i; j++) {
-                if (studentCopy[j].getStName().compareTo(studentCopy[j + 1].getStName()) > 0) {
+                if (studentCopy[j].getStName().compareTo(studentCopy[j + 1].getStName()) > 0) {//
                     Student temp = studentCopy[j];
                     studentCopy[j] = studentCopy[j + 1];
                     studentCopy[j + 1] = temp;
@@ -337,7 +336,7 @@ public class Main {
         for (int i = 0; i < studentCount; i++) {
             System.out.println("----------------------------------------");
             System.out.println("Student " + (i + 1));
-            System.out.println("==>Student ID: " + studentCopy[i].getStID());
+            System.out.println("==>Student ID  : " + studentCopy[i].getStID());
             System.out.println("==>Student Name: " + studentCopy[i].getStName());
         }
         System.out.println("----------------------------------------\n\n>>Press Enter to continue<<");
@@ -358,7 +357,7 @@ public class Main {
             System.out.println("==============================\n");
             System.out.println("1) Add Student name");
             System.out.println("2) Add Module Marks");
-            System.out.println("3) Summery");
+            System.out.println("3) Summary");
             System.out.println("4) Report");
             System.out.println("0) <== Back");
             System.out.print("Enter your choice: ");
@@ -375,7 +374,7 @@ public class Main {
                         break;
                     //********* Task 3 *********
                     case 3:
-                        summery();
+                        summary();
                         break;
                     case 4:
                         report();
@@ -467,9 +466,7 @@ public class Main {
                             System.out.print("Enter marks of module " + (i + 1) + ": ");
                             double mark = userInput.nextDouble();
                             userInput.nextLine();
-                            // Check mark validity
-                            if (mark < 0 || mark > 100) {
-                                System.out.println("Invalid Marks");
+                            if (!markValidation(mark)){
                                 continue;
                             }
                             student.getModules()[i] = new Module(mark);
@@ -489,13 +486,13 @@ public class Main {
 
 
     /**
-     * Gives a summery if the batch of students
+     * Gives a summary if the batch of students
      * Totals number of students registered
      * Total number of students who has got Marks >= 40 in each Module
      */
-    private static void summery() {
+    private static void summary() {
         int count = 0;
-        System.out.println("\n      *** Summery ***\n-------------------------");
+        System.out.println("\n      *** summary ***\n-------------------------");
         // Check if student count is 0
         if (studentCount == 0) {
             System.out.println("\nNo Students registered.");
@@ -595,29 +592,38 @@ public class Main {
                         if (register) {// If called from register method this is executed
                             return false;
                         } else {
-                            System.out.println("\nThis ID does not exist. Please try again!\n");
+                            System.out.println("\nThis ID does not exist.\n");
                             return true;
                         }
                     } else {
                         if (register) {// If called from register method this is executed
-                            System.out.println("\nThis ID already exists. Please try again!\n");
+                            System.out.println("\nThis ID already exists.\n");
                             return true;
                         } else {
                             return false;
                         }
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("\nInvalid ID. Please try again!\n");
+                    System.out.println("\nInvalid ID.\n");
                     return true;
                 }
             } else {
-                System.out.println("\n'w' at the beginning is missing. Please try again!\n");
+                System.out.println("\n'w' at the beginning is missing.\n");
                 return true;
             }
         } else {
-            System.out.println("\nID length should be 8 characters. Please try again!\n");
+            System.out.println("\nID length should be 8 characters.\n");
             return true;
         }
+    }
+
+    private static boolean markValidation(double mark) {
+        // Check mark validity
+        if (mark < 0 || mark > 100) {
+            System.out.println("Invalid Marks");
+            return false;
+        }
+        return true;
     }
 
 
