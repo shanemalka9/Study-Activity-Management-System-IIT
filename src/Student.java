@@ -17,6 +17,15 @@ public class Student {
         this.modules = new Module[3];
     }
 
+    public Student(String ID, String name, double mark1, double mark2, double mark3) {
+        this.stID = ID;
+        this.stName = name;
+        this.modules = new Module[3];
+        this.modules[0] = new Module(mark1);
+        this.modules[1] = new Module(mark1);
+        this.modules[2] = new Module(mark1);
+    }
+
     // Getters and Setters
     public String getStID() {
         return stID;
@@ -76,5 +85,15 @@ public class Student {
         } else {
             return "fail";
         }
+    }
+
+    public String getAllInfo() {
+        String template = "%s %s %.2f %.2f %.2f";
+        return String.format(template, stID, stName, modules[0].getModuleMarks(), modules[1].getModuleMarks(), modules[2].getModuleMarks());
+    }
+
+    public String getInfo(){
+        String template = "%s %s";
+        return String.format(template, stID, stName);
     }
 }

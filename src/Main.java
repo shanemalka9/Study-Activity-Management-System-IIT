@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.*;
 
 //********* Task 1 *********
 
@@ -8,9 +9,10 @@ public class Main {
     private static final int maxStudents = 100;
     private static Student[] students = new Student[maxStudents];// Array with space for 100 elements
     private static Scanner userInput = new Scanner(System.in);
+    private static String fileName = "student.txt";
 
     public static void main(String[] args) {
-        studentCount();
+        importDetails(true);
 
         while (true) {
             System.out.println("==============================");
@@ -29,7 +31,7 @@ public class Main {
             System.out.println("0) Exit");
             System.out.print("Enter your choice: ");
             // Checks if user has inputted an integer
-            if (userInput.hasNextInt()) {
+            try {
                 int menuItem = userInput.nextInt();
                 userInput.nextLine();
                 // Checks if the user has selected a menu item between 1 and 8
@@ -50,7 +52,7 @@ public class Main {
                         exportDetails();
                         break;
                     case 6:
-                        importDetails();
+                        importDetails(false);
                         break;
                     case 7:
                         view();
@@ -59,13 +61,15 @@ public class Main {
                         extraMenu();
                         break;
                     case 0:
+                        userInput.close();
+                        exportDetails();
                         System.out.println("Exiting....");
                         return;
                     default:
                         System.out.println("\nMenu Item Does Not Exist.\n>>Press Enter to continue<<");
                         userInput.nextLine();
                 }
-            } else { // If user inputs an invalid value an error message is printed
+            } catch (InputMismatchException e) { // If user inputs an invalid value an error message is printed
                 System.out.println("\nMenu Item Does not exist! Please choose a valid item.\n>>Press Enter to continue<<");
                 userInput.nextLine();// Clear userInput
                 userInput.nextLine();// Pauses until user presses enter
@@ -116,25 +120,29 @@ public class Main {
      * This function is used to delete entries in the array.
      */
     private static void delete() {
-        String id;
-        // Prompts the user a question asking if they want to view the list of students to find the student ID needed to be deleted
-        askView();
+        if (studentCount == 0) {
+            System.out.println("\nNo Students registered.");
+        } else {
+            String id;
+            // Prompts the user a question asking if they want to view the list of students to find the student ID needed to be deleted
+            askView();
 
-        do {
-            System.out.print("Enter Student ID of entry you want to delete: ");
-            id = userInput.next();
-            userInput.nextLine();
-            if (id.equals("q")) {
-                return;
-            }
-        } while (idValidation(id, false));
-        for (int i = 0; i < studentCount; i++) {// Loop through all elements in array
-            if (students[i].getStID().equals(id)) {// Check until Student ID is equal to the user input
-                for (int j = i; j < studentCount - 1; j++) {
-                    students[j] = students[j + 1];// Shift all elements 1 step to the left
+            do {
+                System.out.print("Enter Student ID of entry you want to delete: ");
+                id = userInput.next();
+                userInput.nextLine();
+                if (id.equals("q")) {
+                    return;
                 }
-                students[studentCount - 1] = null; // Set the last element to null after shifting
-                break; // Exit the loop once the element is deleted
+            } while (idValidation(id, false));
+            for (int i = 0; i < studentCount; i++) {// Loop through all elements in array
+                if (students[i].getStID().equals(id)) {// Check until Student ID is equal to the user input
+                    for (int j = i; j < studentCount - 1; j++) {
+                        students[j] = students[j + 1];// Shift all elements 1 step to the left
+                    }
+                    students[studentCount - 1] = null; // Set the last element to null after shifting
+                    break; // Exit the loop once the element is deleted
+                }
             }
         }
         System.out.println("Student entry deleted successfully.\n>>Press Enter to continue<<");
@@ -147,35 +155,39 @@ public class Main {
      * Method used to search for a student using Student ID
      */
     private static void search() {
-        String id;
+        if (studentCount == 0) {
+            System.out.println("\nNo Students registered.");
+        } else {
+            String id;
 
-        do {
-            System.out.print("\nEnter student ID to search: ");
-            id = userInput.next();
-            userInput.nextLine();
-            if (id.equals("q")) {
-                return;
-            }
-        } while (idValidation(id, false));
+            do {
+                System.out.print("\nEnter student ID to search: ");
+                id = userInput.next();
+                userInput.nextLine();
+                if (id.equals("q")) {
+                    return;
+                }
+            } while (idValidation(id, false));
 
-        for (Student student : students) {// Iterate through the students array
-            if (student == null) {
-                break;// Break loop if student is null.
-            }
-            if (student.getStID().equals(id)) {// True if user input ID is equal to an ID in an object in students array
+            for (Student student : students) {// Iterate through the students array
+                if (student == null) {
+                    break;// Break loop if student is null.
+                }
+                if (student.getStID().equals(id)) {// True if user input ID is equal to an ID in an object in students array
 
-                System.out.println(">> Search results <<");
-                System.out.println("Student ID: " + student.getStID());
-                System.out.println("Student Name: " + student.getStName());
-                System.out.println("Student marks");
+                    System.out.println(">> Search results <<");
+                    System.out.println("Student ID: " + student.getStID());
+                    System.out.println("Student Name: " + student.getStName());
+                    System.out.println("Student marks");
 
-                // Loop to check if marks ara available or not and print them
-                for (int i = 0; i < student.getModules().length; i++) {
-                    System.out.print("==> Module " + (i + 1) + " : ");
-                    if (student.getModules()[i] == null) {
-                        System.out.println("Marks Unavailable");
-                    } else {
-                        System.out.println(student.getModules()[i].getModuleMarks());
+                    // Loop to check if marks ara available or not and print them
+                    for (int i = 0; i < student.getModules().length; i++) {
+                        System.out.print("==> Module " + (i + 1) + " : ");
+                        if (student.getModules()[i] == null) {
+                            System.out.println("Marks Unavailable");
+                        } else {
+                            System.out.println(student.getModules()[i].getModuleMarks());
+                        }
                     }
                 }
             }
@@ -185,11 +197,90 @@ public class Main {
     }
 
 
+    /**
+     * Method used to export Student details to 'student.txt'
+     */
     private static void exportDetails() {
+        boolean flag = false;
+
+        try (FileWriter fileWrite = new FileWriter(fileName)) {
+            for (Student student : students) {
+                if (student == null) {
+                    fileWrite.close();
+                    break;
+                }
+                for (int i = 0; i < student.getModules().length; i++) {
+                    if (student.getModules()[i] == null) {
+                        flag = true;
+                    }
+                }
+                if (flag) {
+                    fileWrite.write(student.getInfo() + "\n");
+                    continue;
+                }
+
+                fileWrite.write(student.getAllInfo() + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
-    private static void importDetails() {
+    private static void importDetails(boolean begin) {
+        try {
+            File file = new File(fileName);
+
+            if (!file.exists()) {
+                exportDetails();
+                System.out.println("File does not exist! New file created.");
+                System.out.println(">>Press Enter to continue<<");
+                userInput.nextLine();
+                return;
+            }
+            if (file.length() == 0) {
+                System.out.println("File is empty!");
+                System.out.println(">>Press Enter to continue<<");
+                userInput.nextLine();
+                return;
+            }
+            Scanner readFile = new Scanner(file);
+
+            while (readFile.hasNextLine()) {
+                String ID = readFile.next();
+                if (!begin) {
+                    boolean flag = false;
+                    for (int i = 0; i < studentCount; i++) {
+                        if (students[i].getStID().equals(ID)){
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (flag) {
+                        continue;
+                    }
+                }
+                String name = readFile.next();
+                if (readFile.hasNextDouble()) {
+                    double mark1 = readFile.nextDouble();
+                    double mark2 = readFile.nextDouble();
+                    double mark3 = readFile.nextDouble();
+                    students[studentCount] = new Student(ID, name, mark1, mark2, mark3);
+                    studentCount++;
+                } else {
+                    students[studentCount] = new Student(ID, name);
+                    studentCount++;
+
+                }
+            }
+            readFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchElementException e) {
+            return;
+        } catch (Exception e) {
+            System.out.println(">> " + e.getMessage());
+        }
     }
 
 
@@ -246,7 +337,7 @@ public class Main {
             System.out.println("0) <== Back");
             System.out.print("Enter your choice: ");
 
-            if (userInput.hasNextInt()) {
+            try {
                 int menuItem = userInput.nextInt();
                 userInput.nextLine();
                 switch (menuItem) {
@@ -269,7 +360,7 @@ public class Main {
                         System.out.println("\nMenu Item Does not exist! Please choose a valid item.\n>>Press Enter to continue<<");
                         userInput.nextLine();
                 }
-            } else { // If user inputs an invalid value an error message is printed
+            } catch (InputMismatchException e) { // If user inputs an invalid value an error message is printed
                 System.out.println("\nMenu Item Does not exist! Please choose a valid item.\n>>Press Enter to continue<<");
                 userInput.nextLine();// Clear userInput
                 userInput.nextLine();// Pauses until user presses enter
@@ -378,21 +469,24 @@ public class Main {
     private static void summery() {
         int count = 0;
         System.out.println("\n      *** Summery ***\n-------------------------");
-        System.out.println("The total number of students registered is: " + studentCount);
+        if (studentCount == 0) {
+            System.out.println("\nNo Students registered.");
+        } else {
+            System.out.println("The total number of students registered is: " + studentCount);
 
-        for (Student student : students) {
-            if (student == null) {
-                break;
+            for (Student student : students) {
+                if (student == null) {
+                    break;
+                }
+                if (student.getModules()[0] == null && student.getModules()[1] == null && student.getModules()[2] == null) {
+                    continue;
+                }
+                if (student.getModules()[0].getModuleMarks() >= 40 && student.getModules()[1].getModuleMarks() >= 40 && student.getModules()[2].getModuleMarks() >= 40) {
+                    count++;
+                }
             }
-            if (student.getModules()[0] == null && student.getModules()[1] == null && student.getModules()[2] == null) {
-                continue;
-            }
-            if (student.getModules()[0].getModuleMarks() >= 40 && student.getModules()[1].getModuleMarks() >= 40 && student.getModules()[2].getModuleMarks() >= 40) {
-                count++;
-            }
+            System.out.println("Total number of students with marks for each module above 40: " + count);
         }
-
-        System.out.println("Total number of students with marks for each module above 40: " + count);
         System.out.println("\n>>Press Enter to continue<<");
         userInput.nextLine();
     }
@@ -533,18 +627,6 @@ public class Main {
             }
         }
         return !find;
-    }
-
-
-    /**
-     * Finds the number of seats already reserved by counting till null
-     */
-    private static void studentCount() {
-        for (Student student : students) {
-            if (student != null) {
-                studentCount++;
-            }
-        }
     }
 
 
