@@ -17,6 +17,15 @@ public class Student {
         this.modules = new Module[3];
     }
 
+    /**
+     * Constructor for Student with marks included
+     * Used in importing details from the file
+     * @param ID- student id
+     * @param name- student name
+     * @param mark1- module 1 marks
+     * @param mark2- module 2 marks
+     * @param mark3- module 3 marks
+     */
     public Student(String ID, String name, double mark1, double mark2, double mark3) {
         this.stID = ID;
         this.stName = name;
@@ -87,13 +96,19 @@ public class Student {
         }
     }
 
+    /**
+     * Method to get all information in a specific format
+     * @return student ID, Student name, mark 1, mark 2, mark 3.
+     */
     public String getAllInfo() {
-        String template = "%s,%s,%.2f,%.2f,%.2f";
-        return String.format(template, stID, stName, modules[0].getModuleMarks(), modules[1].getModuleMarks(), modules[2].getModuleMarks());
+        return String.format("%s,%s,%.2f,%.2f,%.2f", stID, stName, modules[0].getModuleMarks(), modules[1].getModuleMarks(), modules[2].getModuleMarks());
     }
 
-    public String getInfo(){
-        String template = "%s,%s";
-        return String.format(template, stID, stName);
+    /**
+     * Method to get ID and name in a specific format
+     * @return student ID, Student name.
+     */
+    public String getBasicInfo(){
+        return String.format("%s,%s", stID, stName);
     }
 }

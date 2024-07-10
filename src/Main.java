@@ -236,7 +236,7 @@ public class Main {
                 }
                 // If a null value is found in module then write only the ID and name
                 if (flag) {
-                    fileWrite.write(student.getInfo() + "\n");
+                    fileWrite.write(student.getBasicInfo() + "\n");
                     continue;
                 }
 
