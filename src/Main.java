@@ -120,9 +120,11 @@ public class Main {
      * This function is used to delete entries in the array.
      */
     private static void delete() {
+        boolean flag = true;
         // Check if there are no students
         if (studentCount == 0) {
             System.out.println("\nNo Students registered.");
+            flag = false;
         } else {
             String id;
             // Prompts the user a question asking if they want to view the list of students to find the student ID needed to be deleted
@@ -149,8 +151,11 @@ public class Main {
                 }
             }
         }
-        System.out.println("Student entry deleted successfully.\n>>Press Enter to continue<<");
-        studentCount--;
+        if (flag) {
+            System.out.println("Student entry deleted successfully.");
+            studentCount--;
+        }
+        System.out.println("\n>>Press Enter to continue<<");
         userInput.nextLine();
     }
 
@@ -209,7 +214,11 @@ public class Main {
      */
     private static void exportDetails() {
         boolean flag = false;
-
+        boolean flagMessage = true;
+        if (studentCount == 0) {
+            System.out.println("No students have been registered");
+            flagMessage = false;
+        }
         // Try-with-resource statement to write to file
         try (FileWriter fileWrite = new FileWriter(fileName)) {
             // Iterate through array until student becomes null
@@ -234,7 +243,9 @@ public class Main {
                 // If module is not null then write all
                 fileWrite.write(student.getAllInfo() + "\n");
             }
-            System.out.println("All data has successfully been saved to the file.");
+            if (flagMessage) {
+                System.out.println("All data has successfully been saved to the file.");
+            }
             System.out.println("\n>>Press Enter to continue<<");
             userInput.nextLine();
         } catch (IOException e) {
@@ -277,15 +288,22 @@ public class Main {
                 if (idValidation(line[0], true)) {
                     continue;
                 }
-
+                // If name is empty then skip the line
+                if (line[1].isEmpty()){
+                    continue;
+                }
                 // Check if file has marks
                 if (line.length == 5) {// If it does then assign to variables and create object with it
-                    double mark1 = Double.parseDouble(line[2]);
-                    double mark2 = Double.parseDouble(line[3]);
-                    double mark3 = Double.parseDouble(line[4]);
-                    if (markValidation(mark1) && markValidation(mark2) && markValidation(mark3)) {
-                        students[studentCount] = new Student(line[0].strip(), line[1].toUpperCase(), mark1, mark2, mark3);
-                        studentCount++;
+                    try {
+                        double mark1 = Double.parseDouble(line[2]);
+                        double mark2 = Double.parseDouble(line[3]);
+                        double mark3 = Double.parseDouble(line[4]);
+                        if (markValidation(mark1) && markValidation(mark2) && markValidation(mark3)) {
+                            students[studentCount] = new Student(line[0].strip(), line[1].toUpperCase(), mark1, mark2, mark3);
+                            studentCount++;
+                        }
+                    } catch (InputMismatchException e) {
+                        e.printStackTrace();
                     }
                 } else if (line.length == 2) { // else call create object with no marks
                     students[studentCount] = new Student(line[0].strip(), line[1].toUpperCase());
@@ -355,7 +373,7 @@ public class Main {
             System.out.println("\n==============================");
             System.out.println("*   Additional Menu Items    *");
             System.out.println("==============================\n");
-            System.out.println("1) Add Student name");
+            System.out.println("1) Update Student name");
             System.out.println("2) Add Module Marks");
             System.out.println("3) Summary");
             System.out.println("4) Report");
@@ -367,7 +385,7 @@ public class Main {
                 userInput.nextLine();
                 switch (menuItem) {
                     case 1:
-                        addStudentName();
+                        updateStudentName();
                         break;
                     case 2:
                         addModuleMarks();
@@ -399,7 +417,7 @@ public class Main {
      * Function used to add name to a student after registering
      * If student name has already been assigned the program asks if the user wants to update the name
      */
-    private static void addStudentName() {
+    private static void updateStudentName() {
         String id;
         String name;
 
@@ -409,7 +427,7 @@ public class Main {
 
         // Loop until Correct ID is provided
         do {
-            System.out.print("Enter student ID to add name: ");
+            System.out.print("Enter student ID to update name: ");
             id = userInput.next();
             userInput.nextLine();
             if (id.equals("q")) {
