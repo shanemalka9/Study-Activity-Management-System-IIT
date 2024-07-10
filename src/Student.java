@@ -22,8 +22,8 @@ public class Student {
         this.stName = name;
         this.modules = new Module[3];
         this.modules[0] = new Module(mark1);
-        this.modules[1] = new Module(mark1);
-        this.modules[2] = new Module(mark1);
+        this.modules[1] = new Module(mark2);
+        this.modules[2] = new Module(mark3);
     }
 
     // Getters and Setters
