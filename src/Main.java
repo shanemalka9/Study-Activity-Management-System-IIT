@@ -49,7 +49,7 @@ public class Main {
                         search();
                         break;
                     case 5:
-                        exportDetails();
+                        exportDetails(false);
                         break;
                     case 6:
                         importDetails(false);
@@ -61,7 +61,7 @@ public class Main {
                         extraMenu();
                         break;
                     case 0:
-                        exportDetails();
+                        exportDetails(true);
                         userInput.close();
                         System.out.println("Exiting....");
                         return;
@@ -212,17 +212,20 @@ public class Main {
     /**
      * Method used to export Student details to 'student.txt'
      */
-    private static void exportDetails() {
-        boolean flag = false;
+    private static void exportDetails(boolean exit) {
         boolean flagMessage = true;
         if (studentCount == 0) {
             System.out.println("No students have been registered");
             flagMessage = false;
         }
         // Try-with-resource statement to write to file
-        try (FileWriter fileWrite = new FileWriter(fileName)) {
+        try {
+            File file = new File(fileName);
+            FileWriter fileWrite = new FileWriter(file);
             // Iterate through array until student becomes null
             for (Student student : students) {
+                boolean flag = false;
+
                 // Break from loop when student is equal to null
                 if (student == null) {
                     fileWrite.close();
@@ -246,8 +249,11 @@ public class Main {
             if (flagMessage) {
                 System.out.println("All data has successfully been saved to the file.");
             }
-            System.out.println("\n>>Press Enter to continue<<");
-            userInput.nextLine();
+            if (!exit) {
+                System.out.println("\n>>Press Enter to continue<<");
+                userInput.nextLine();
+            }
+            fileWrite.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
