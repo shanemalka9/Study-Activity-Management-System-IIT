@@ -9,7 +9,7 @@ public class Main {
     private static final int maxStudents = 100;
     private static Student[] students = new Student[maxStudents];// Array with space for 100 elements
     private static Scanner userInput = new Scanner(System.in);
-    private static String fileName = "student.txt";
+    private static String fileName = "./src/student.txt";
 
     public static void main(String[] args) {
         importDetails(true);
